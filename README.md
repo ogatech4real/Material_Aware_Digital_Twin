@@ -1,3 +1,13 @@
+## Important Notice
+
+This repository accompanies an IEEE Access manuscript currently under peer review.  
+It has been made publicly accessible **exclusively for reviewer and editorial evaluation**.  
+No part of this work — including the code, data, figures, or manuscript text — may be copied, reused, or cited until the article has been formally accepted and published.  
+
+For questions, collaboration requests, or clarification, please get in touch with the corresponding author directly at **hello@adewaleogabi.info, ogabi.adewale@gmail.com**.
+
+---
+
 # Materials-Aware Digital Twin for Solar–Battery Systems  
 **A reproducible framework for lifecycle-aware optimisation of photovoltaic (PV) and battery energy storage systems**
 
@@ -48,56 +58,55 @@ The framework follows a structured digital twin architecture linking six key mod
 5. **Control Execution:** Applies the first decision at each step, updating system states iteratively.  
 6. **Evaluation:** Computes KPIs (economic, lifecycle, environmental) and performs statistical validation.
 
-The workflow can be executed entirely via:
+---
 
-```bash
+## The workflow can be executed entirely via:
+
+  ``bash
 python main.py
 All figures and tables in the paper can be regenerated from the results/ and figs/ directories.
 
-## Key Performance Indicators (KPIs)
+---
 
-Economic: Annual electricity cost, arbitrage revenue, peak import reduction, LCOS.
+##  Key Performance Indicators (KPIs)
 
-Lifecycle: Battery capacity fade (%), equivalent full cycles, PV performance ratio decline.
+  1. **Economic**: Annual electricity cost, arbitrage revenue, peak import reduction, LCOS.
+  2. **Lifecycle**: Battery capacity fade (%), equivalent full cycles, PV performance ratio decline.
+  3. **Environmental**: Avoided CO₂ emissions (kgCO₂e).
+  4. **Reliability**: Demand served (%), reserve margin compliance.
 
-Environmental: Avoided CO₂ emissions (kgCO₂e).
-
-Reliability: Demand served (%), reserve margin compliance.
+---
 
 ## Simulation Results (Summary)
 
-Battery wear reduction by 10–20% compared to the cost-only control.
+  - Battery wear reduction by 10–20% compared to the cost-only control.
+  - PV degradation slowed by ≈0.1%/year.
+  - Cost difference < 3% from baseline while improving lifetime economics.
+  - Results statistically validated via bootstrapping and Pareto trade-off analysis.
 
-PV degradation slowed by ≈0.1%/year.
-
-Cost difference < 3% from baseline while improving lifetime economics.
-
-Results statistically validated via bootstrapping and Pareto trade-off analysis.
+---
 
 ## Implementation Environment
 
-Language: Python 3.10+
+- Language: Python 3.10+
+- Optimisation Engine: Pyomo (CBC solver)
+- Key Libraries: Pandas, NumPy, Matplotlib, Scikit-learn, Statsmodels
+- Runtime: Tested on Windows 11 and Ubuntu 22.04
+- Hardware: 8GB RAM minimum; optional Raspberry Pi deployment for real-time control
 
-Optimisation Engine: Pyomo (CBC solver)
-
-Key Libraries: Pandas, NumPy, Matplotlib, Scikit-learn, Statsmodels
-
-Runtime: Tested on Windows 11 and Ubuntu 22.04
-
-Hardware: 8GB RAM minimum; optional Raspberry Pi deployment for real-time control
+---
 
 ## Hardware Integration (Optional)
 
 The framework is ready for hardware-in-the-loop (HIL) validation.
-A typical setup includes:
+  - A typical setup includes:
+  - Raspberry Pi as edge controller running the optimisation engine.
+  - Arduino UNO WiFi as sensor/actuator interface for voltage, current, and temperature measurements.
+  - Communication: MQTT, Modbus, or REST API between the physical system and the digital twin.
+  - This setup enables real-time testing of lifecycle-aware control strategies.
 
-Raspberry Pi as edge controller running the optimisation engine.
 
-Arduino UNO WiFi as sensor/actuator interface for voltage, current, and temperature measurements.
-
-Communication: MQTT, Modbus, or REST API between the physical system and the digital twin.
-
-This setup enables real-time testing of lifecycle-aware control strategies.
+---
 
 ## Citation
 
@@ -109,17 +118,23 @@ IEEE Access, 2025. DOI: to be assigned.
 GitHub Repository
 
 
+
+---
+
 ## License
 
 This repository is distributed under the MIT License.
 You are free to use, modify, and distribute this work with appropriate credit.
 
+
+---
+
 ## Contact
 
-Author: Adewale Ogabi
-Affiliation: School of Computing, Engineering, and Digital Technologies, Teesside University, UK
-Email: hello@adewaleogabi.info, ogabi.adewale@gmail.com
+- Author: Adewale Ogabi
+- Affiliation: School of Computing, Engineering, and Digital Technologies, Teesside University, UK
+- Email: hello@adewaleogabi.info, ogabi.adewale@gmail.com
 
 Repository: https://github.com/ogatech4real/Material_Aware_Digital_Twin
 
-This repository accompanies the IEEE Access manuscript and supports reproducible research in lifecycle-aware optimisation and digital twin development for renewable energy systems.
+
