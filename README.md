@@ -2,7 +2,7 @@
 
 This repository accompanies an IEEE Access manuscript currently under peer review.  
 It has been made publicly accessible **exclusively for reviewer and editorial evaluation**.  
-No part of this work — including the code, data, figures, or manuscript text — may be copied, reused, or cited until the article has been formally accepted and published.  
+No part of this work, including the code, data, figures, or manuscript text, may be copied, reused, or cited until the article has been formally accepted and published.  
 
 For questions, collaboration requests, or clarification, please get in touch with the corresponding author directly at **hello@adewaleogabi.info, ogabi.adewale@gmail.com**.
 
