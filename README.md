@@ -37,43 +37,6 @@ This project introduces a **materials-aware digital twin** that:
 
 ---
 
-## Repository Structure
-Material_Aware_Digital_Twin/
-│
-├── src/ # Core source modules
-│ ├── data_generator.py # Creates synthetic irradiance, temperature, load, and tariff data
-│ ├── forecast_models.py # Forecasts PV generation and load profiles
-│ ├── degradation_models.py # Battery and PV degradation models
-│ ├── optimizer.py # Rolling-horizon optimisation model (Pyomo)
-│ ├── controller.py # Executes optimisation loop
-│ ├── evaluation.py # Computes KPIs and aggregates results
-│ ├── analysis_extensions.py # Bootstrapping and Pareto trade-off analysis
-│ ├── plots.py # Generates all figures for the paper
-│ └── main.py # Orchestrates the complete workflow
-│
-├── data/ # Input data
-│ └── sim_input.csv # One-year, 15-min interval dataset (irradiance, load, tariff, etc.)
-│
-├── results/ # Output data
-│ ├── baseline.csv
-│ ├── battaware.csv
-│ ├── fullaware.csv
-│ ├── kpis.csv
-│ └── pareto.csv
-│
-├── figs/ # Figures and visualisations
-│ ├── dispatch_full.png
-│ ├── kpis_annual_cost_gbp.png
-│ ├── kpis_co2_avoided_kg.png
-│ ├── kpis_equivalent_full_cycles.png
-│ └── pareto.png
-│
-├── config.yaml # Simulation configuration (weights λb, λpv, λc)
-├── requirements.txt # Python dependencies
-├── LICENSE
-└── README.md
----
-
 ## Methodology Summary
 
 The framework follows a structured digital twin architecture linking six key modules:
