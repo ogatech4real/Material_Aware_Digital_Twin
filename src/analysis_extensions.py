@@ -1,63 +1,99 @@
+# analysis_extensions.py
 import numpy as np
 import pandas as pd
+from pathlib import Path
+import yaml
+
+from src.evaluation import summarize_kpis
+from src.controller import run_controller
+from src.data_generator import generate_time_index, build_dataframe
 
 
-def generate_time_index(start="2024-01-01", periods=96*14, freq="15min"):
-    # default: 2 weeks for a quick demo; adjust periods for 1-year (365*96)
-    return pd.date_range(start=start, periods=365*96, freq=freq)
+def _ensure_dirs():
+    Path("results").mkdir(exist_ok=True)
+    Path("figs").mkdir(exist_ok=True)
 
 
-def synthetic_load_profile(idx, base_kw=0.6, peak_kw=3.5, noise=0.2):
-    tmins = idx.hour*60 + idx.minute
-    dayfrac = tmins/(24*60.0)
-    daily = base_kw + (peak_kw-base_kw)*np.exp(-((dayfrac-0.20)**2)/(2*0.03))  # ~5am peak
-    evening = (peak_kw-base_kw)*np.exp(-((dayfrac-0.83)**2)/(2*0.02))         # ~8pm peak
-    weekly = 1.0 + 0.1*np.sin(2*np.pi*(idx.dayofweek/7))
-    rng = np.random.default_rng(42)
-    eps = rng.normal(0, noise, size=len(idx))
-    return np.maximum(0.1, (daily + evening)*weekly + eps)
+def bootstrap_kpis(df, conf, scenario="full", n_samples=1000, seed=0):
+    """
+    Bootstrap daily mean cost to produce 95% CI.
+    Uses your original controller and KPI pipeline.
+    """
+    dt_h = conf["time"]["dt_minutes"] / 60.0
+    e_nom = conf["battery"]["e_nom_kwh"]
+
+    # Run the scenario once to get full-year (or month) series
+    out = run_controller(df.copy(), conf, scenario=scenario)
+
+    # Daily cost series
+    energy_cost = (out["pimp"] * out["price_import_gbp_per_kwh"]
+                   - out["pexp"] * out["price_export_gbp_per_kwh"]) * dt_h
+    daily_sum = energy_cost.groupby(out.index.date).sum().values
+
+    rng = np.random.default_rng(seed)
+    boot_means = []
+    for _ in range(n_samples):
+        sample = rng.choice(daily_sum, size=len(daily_sum), replace=True)
+        boot_means.append(sample.mean())
+
+    return np.percentile(boot_means, [2.5, 97.5])
 
 
-def synthetic_irradiance(idx):
-    doy = idx.dayofyear.values
-    tmin = idx.hour + idx.minute/60.0
-    season = 0.5 + 0.5*np.cos(2*np.pi*(doy-172)/365.0)  # peak in June
-    diurnal = np.maximum(0, np.sin((tmin/24.0)*np.pi))  # 0..1 daylight half-wave
-    ghi = season * diurnal
-    return np.clip(ghi, 0, None)
+def pareto_frontier(df, conf,
+                    lambdas_batt=(0.00, 0.10, 0.20, 0.40, 0.60, 1.00),
+                    lambdas_pv=(0.00, 0.05, 0.10, 0.20)):
+    """
+    Sweep (lambda_batt, lambda_pv) and collect annual cost + degradation KPIs.
+    Returns DataFrame with columns:
+    lambda_batt, lambda_pv, annual_cost_gbp, equivalent_full_cycles, capacity_fade_pct, co2_avoided_kg
+    """
+    dt_h = conf["time"]["dt_minutes"] / 60.0
+    e_nom = conf["battery"]["e_nom_kwh"]
+    results = []
 
+    for lb in lambdas_batt:
+        for lpv in lambdas_pv:
+            # Deep copy via YAML round-trip to avoid in-place edits
+            conf_mod = yaml.safe_load(yaml.dump(conf))
+            conf_mod["economics"]["lambda_batt"] = float(lb)
+            conf_mod["economics"]["lambda_pv"] = float(lpv)
 
-def pv_dc_power_kw(irr, pdc_stc_kw=5.0):
-    return pdc_stc_kw * irr
+            # Full (materials-aware) scenario
+            out = run_controller(df.copy(), conf_mod, scenario="full")
+            kpi = summarize_kpis(out.join(df, rsuffix="_in"), dt_h, e_nom)
 
+            results.append({
+                "lambda_batt": lb,
+                "lambda_pv": lpv,
+                "annual_cost_gbp": kpi.get("annual_cost_gbp", np.nan),
+                "equivalent_full_cycles": kpi.get("equivalent_full_cycles", np.nan),
+                "capacity_fade_pct": kpi.get("capacity_fade_pct", np.nan),
+                "co2_avoided_kg": kpi.get("co2_avoided_kg", np.nan),
+                "arbitrage_gbp": kpi.get("arbitrage_gbp", np.nan),
+            })
 
-def synthetic_tariffs(idx, base=0.25, spread=0.15):
-    hour = idx.hour.values
-    price = np.full(len(idx), base)
-    price += ((hour>=17)&(hour<=21))*spread    # evening high
-    price -= ((hour>=1)&(hour<=5))*0.08        # overnight low
-    return np.maximum(0.05, price)
-
-
-def feed_in_tariff(import_prices):
-    return 0.4*import_prices
-
-
-def build_dataframe(idx):
-    df = pd.DataFrame(index=idx)
-    df["load_kw"] = synthetic_load_profile(idx)
-    irr = synthetic_irradiance(idx)
-    df["pv_kw_raw"] = pv_dc_power_kw(irr)
-    df["price_import_gbp_per_kwh"] = synthetic_tariffs(idx)
-    df["price_export_gbp_per_kwh"] = feed_in_tariff(df["price_import_gbp_per_kwh"])
-    df["ambient_c"] = 15 + 10*np.sin(2*np.pi*(idx.dayofyear-172)/365.0)
-    df["cell_temp_c"] = df["ambient_c"] + 20*irr
-    df["carbon_intensity"] = 0.15 + 0.1*np.sin(2*np.pi*(idx.hour/24.0))
-    return df
+    df_res = pd.DataFrame(results).sort_values(["annual_cost_gbp", "equivalent_full_cycles"])
+    return df_res
 
 
 if __name__ == "__main__":
-    idx = generate_time_index()
+    _ensure_dirs()
+
+    # ---- Load config and build data ----
+    with open("config.yaml", "r") as f:
+        conf = yaml.safe_load(f)
+
+    # Use full year unless you’re doing a quick test.
+    # periods = 96 * 365  # full year @ 15-min
+    periods = conf.get("time", {}).get("periods", 96 * 365)
+    idx = generate_time_index(periods=periods)
     df = build_dataframe(idx)
-    df.to_csv("data/sim_input.csv")
-    print("Saved data/sim_input.csv", df.shape)
+
+    # ---- Bootstrap CI on daily cost ----
+    ci = bootstrap_kpis(df, conf, scenario="full", n_samples=1000)
+    print("95% CI for mean daily cost [GBP]:", ci)
+
+    # ---- Pareto sweep & save ----
+    df_pareto = pareto_frontier(df, conf)
+    df_pareto.to_csv("results/pareto.csv", index=False)
+    print(f"Saved results/pareto.csv with {len(df_pareto)} rows.")
