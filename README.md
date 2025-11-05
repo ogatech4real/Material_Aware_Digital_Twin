@@ -199,11 +199,10 @@ Then rerun `python main.py` — the input dataset will be automatically recreate
 If you use this repository, please cite the following paper:
 
 A. Ogabi, G. Aggarwal, P. M. Ushasree, and A. Alabi,
+
 “Materials-Aware Digital Twin for Solar–Battery Systems: Integrating Equipment Ageing into Smart Energy Optimisation,”
+
 IEEE Access, 2025. DOI: to be assigned.
-GitHub Repository
-
-
 
 ---
 
