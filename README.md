@@ -1,198 +1,180 @@
-<div align="center">
+# Intelligent Degradation-Aware Dispatch for PV-Battery Energy Systems
 
-# Materials-Aware Digital Twin for Solar–Battery Systems
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
+[![Dashboard](https://img.shields.io/badge/Interactive%20Digital%20Twin-Streamlit-FF4B4B.svg)](https://pvbattdt.streamlit.app/)
+[![License](https://img.shields.io/badge/License-See%20LICENSE-lightgrey.svg)](LICENSE)
+[![Status](https://img.shields.io/badge/Status-Research%20Implementation-success.svg)](#)
 
-### Lifecycle-aware digital twin modelling, dispatch optimisation, degradation analysis and interactive visualisation for PV–battery energy systems
+A reproducible implementation of an **intelligent degradation-aware
+supervisory dispatch framework** for inverter-interfaced photovoltaic
+(PV) and battery energy storage systems (BESS).
 
-[![Repository](https://img.shields.io/badge/GitHub-Repository-181717?logo=github)](https://github.com/ogatech4real/Material_Aware_Digital_Twin)
-[![Live Dashboard](https://img.shields.io/badge/Streamlit-Live%20Dashboard-FF4B4B?logo=streamlit&logoColor=white)](https://pvbattdt.streamlit.app/)
-[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+The framework moves beyond cost-only energy management by embedding
+**battery ageing**, **PV performance loss**, **inverter constraints**,
+and **adaptive degradation weighting** into operational dispatch. It
+provides a lightweight digital-twin decision-support architecture for
+lifecycle-aware energy management.
 
-</div>
+> **Interactive digital twin:**
+> [pvbattdt.streamlit.app](https://pvbattdt.streamlit.app/)
 
----
-
-## Overview
-
-This repository contains the complete implementation of the **Materials-Aware Digital Twin (MAT-DT)** framework for solar photovoltaic (PV) and battery energy storage systems.
-
-The framework extends conventional energy-management simulation by embedding **asset degradation and lifecycle awareness** into operational assessment and control. It links time-series PV generation, household demand, battery state, degradation behaviour, dispatch decisions, economic performance and environmental indicators within a reproducible digital-twin workflow.
-
-The complete implementation of the materials-aware digital twin framework, including source code, configuration files and simulation output, is available here:
-
-**Repository:** https://github.com/ogatech4real/Material_Aware_Digital_Twin
-
-An interactive Streamlit-based dashboard is available to visualise dispatch behaviour, degradation metrics and key performance indicators:
-
-**Live dashboard:** https://pvbattdt.streamlit.app/
-
----
+------------------------------------------------------------------------
 
 ## Framework at a Glance
 
+```{=html}
 <p align="center">
-  <img src="figs/overview%20framework.png" alt="Materials-Aware Digital Twin framework overview" width="92%">
+```
+`<img src="figs/overview%20framework.png" alt="Overview of the degradation-aware PV-battery digital twin framework" width="850">`{=html}
+```{=html}
 </p>
+```
+The implementation couples four functional layers:
 
-<p align="center"><em>Overview of the Materials-Aware Digital Twin framework and its principal information and decision layers.</em></p>
+-   **System physics** --- PV generation, battery state of charge, grid
+    exchange, tariffs and inverter conversion.
+-   **Asset ageing** --- reduced-order battery calendar/cycle ageing and
+    PV temperature/degradation effects.
+-   **Supervisory intelligence** --- degradation-weighted operational
+    decisions with fixed or adaptive control weights.
+-   **Evaluation** --- operating cost, equivalent full cycles,
+    degradation indicators, inverter losses, carbon indicators and
+    runtime.
 
-The digital twin is organised around an iterative workflow in which operational data and model states are transformed into dispatch and lifecycle indicators. Its principal functions include:
+Four operating strategies are supported:
 
-- PV, load and tariff time-series processing;
-- battery state and degradation tracking;
-- PV performance and ageing representation;
-- scenario-aware dispatch and optimisation;
-- cost, carbon and lifecycle KPI evaluation;
-- Pareto and statistical analysis;
-- reproducible simulation outputs; and
-- interactive exploration through the Streamlit dashboard.
+  -----------------------------------------------------------------------
+  Strategy                            Operational role
+  ----------------------------------- -----------------------------------
+  **Baseline**                        Cost-oriented dispatch without
+                                      degradation weighting
 
----
+  **Battery-Aware**                   Introduces battery degradation
+                                      penalties
 
-## Interactive Digital Twin Dashboard
+  **Battery+PV-Aware**                Adds PV performance/degradation
+                                      awareness to supervisory evaluation
 
-The companion Streamlit application provides an interactive view of the digital-twin results, allowing rapid inspection of dispatch behaviour, degradation indicators and selected system KPIs.
+  **Adaptive-Supervisory**            Dynamically adjusts degradation
+                                      weights according to
+                                      operating-state stress
+  -----------------------------------------------------------------------
 
-### Launch the dashboard
+------------------------------------------------------------------------
 
-**https://pvbattdt.streamlit.app/**
+## Research Basis
 
+This repository accompanies:
+
+**Intelligent degradation-aware dispatch for inverter-based
+photovoltaic-battery energy systems**
+
+**Authors:** Adewale Ogabi, Geetika Aggarwal, Palat Meethale Ushasree,
+and Gobind Pillai.
+
+The study evaluates the framework over a **full-year simulation at
+15-minute resolution** and supplements the controlled experiments with
+measured residential demand and meteorological inputs.
+
+### Reported outcomes
+
+-   **18--29% reduction** in annual battery cycling for the fixed
+    degradation-aware strategies relative to baseline.
+-   Annual operating-cost increases maintained **below 3%** in the
+    full-year analysis.
+-   **Adaptive-Supervisory:** **11.5% cycling reduction** relative to
+    baseline with a **2.52% annual cost increase**.
+-   Mean adaptive control-step runtime of approximately **0.295 ms**.
+-   Measured-data validation preserves the degradation--cost trade-off,
+    with **24--27% lower equivalent full cycles** while mean daily
+    operating cost remains approximately **within ±1% of baseline**.
+
+These results should be interpreted within the assumptions and
+validation scope of the associated manuscript.
+
+------------------------------------------------------------------------
+
+## Interactive Digital Twin
+
+```{=html}
 <p align="center">
-  <a href="https://pvbattdt.streamlit.app/">
-    <img src="figs/Streamlit%20dashboard.jpg" alt="Streamlit digital twin dashboard" width="94%">
-  </a>
+```
+`<a href="https://pvbattdt.streamlit.app/">`{=html}
+`<img src="figs/Streamlit%20dashboard.jpg" alt="Streamlit dashboard for the materials-aware PV-battery digital twin" width="900">`{=html}
+`</a>`{=html}
+```{=html}
 </p>
+```
+The Streamlit interface provides an interactive layer for:
 
-<p align="center"><em>Interactive Streamlit dashboard for examining system operation, dispatch behaviour, degradation metrics and performance indicators.</em></p>
+-   scenario selection;
+-   degradation-weight exploration;
+-   dispatch visualisation;
+-   battery cycling and degradation indicators;
+-   operating-cost comparison;
+-   PV and battery performance assessment; and
+-   KPI inspection.
 
----
+### [Launch the hosted Digital Twin →](https://pvbattdt.streamlit.app/)
 
-## Research Motivation
+------------------------------------------------------------------------
 
-Most PV–battery energy-management approaches optimise short-term operation using objectives such as electricity cost, self-consumption or grid interaction. However, operational decisions can also affect long-term asset health.
+## Repository Architecture
 
-The MAT-DT framework introduces **materials awareness** into the digital-twin loop by explicitly representing equipment ageing alongside conventional operational objectives.
-
-This enables the framework to examine trade-offs between:
-
-- short-term energy-management performance;
-- battery cycling and degradation;
-- PV ageing and derating;
-- economic performance;
-- environmental benefit;
-- asset-use intensity; and
-- longer-term lifecycle implications.
-
-The objective is not merely to reproduce system behaviour, but to provide a transparent environment for evaluating how different control strategies influence both immediate performance and equipment condition.
-
----
-
-## Digital Twin Workflow
-
-The implementation follows six connected functional stages:
-
-1. **Data generation and preparation** — produces or loads time-series inputs for PV generation, electrical demand and tariff signals.
-2. **Asset-state modelling** — tracks relevant system states, including battery operation and degradation-related variables.
-3. **Forecast and decision inputs** — provides the near-term information required by the dispatch or optimisation layer.
-4. **Dispatch and optimisation** — evaluates operational actions under alternative lifecycle-awareness assumptions.
-5. **State update** — applies the selected decisions and updates the digital-twin state through time.
-6. **Performance evaluation** — calculates economic, environmental and lifecycle KPIs and produces reproducible outputs.
-
----
-
-## Repository Structure
-
-```text
+``` text
 Material_Aware_Digital_Twin/
 │
-├── main.py                     # Main simulation entry point
-├── config.yaml                 # Global model and experiment configuration
-├── requirements.txt            # Python dependencies
+├── main.py
+├── streamlit_app.py
+├── config.yaml
+├── requirements.txt
 │
-├── data/                       # Input and generated time-series data
+├── src/
+│   ├── system_model.py
+│   ├── controller.py
+│   ├── degradation_models.py
+│   ├── inverter_model.py
+│   ├── optimizer.py
+│   ├── adaptive_supervisor.py
+│   ├── special_issue_extension.py
+│   ├── evaluation.py
+│   ├── analysis_extensions.py
+│   └── plots.py
 │
-├── src/                        # Core digital-twin implementation
-│   ├── data_generator.py       # Input/time-series generation
-│   ├── controller.py           # Dispatch/control logic
-│   ├── degradation_models.py   # Battery and PV ageing models
-│   ├── optimizer.py            # Operational optimisation/dispatch
-│   ├── evaluation.py           # KPI computation
-│   ├── plots.py                # Plotting and visualisation
-│   └── analysis_extensions.py  # Extended statistical/Pareto analysis
+├── experiments/
+│   └── run_special_issue_experiment.py
 │
-├── results/                    # Simulation outputs and KPI files
+├── results/
+│   ├── baseline.csv
+│   ├── battaware.csv
+│   ├── fullaware.csv
+│   ├── kpis.csv
+│   ├── pareto.csv
+│   └── special_issue/
 │
-└── figs/                       # Framework, dashboard and result figures
+├── figs/
+│   ├── overview framework.png
+│   ├── Streamlit dashboard.jpg
+│   ├── Workflow.png
+│   ├── dispatch_full.png
+│   └── ...
+│
+├── SPECIAL_ISSUE_EXTENSION.md
+├── LICENSE
+└── README.md
 ```
 
----
+Large raw datasets are intentionally excluded from Git history. This
+keeps the repository lightweight while separating source code and
+reproducible research artefacts from externally sourced raw data.
 
-## Core Capabilities
+------------------------------------------------------------------------
 
-### Materials-aware operation
-The framework incorporates battery and PV ageing information into the digital-twin representation so that lifecycle effects can be evaluated alongside conventional operational outcomes.
+## Quick Start
 
-### Scenario-based comparison
-Different control assumptions can be compared under a consistent system configuration, supporting analysis of the effect of degradation awareness on dispatch decisions and resulting KPIs.
+### 1. Clone
 
-### Reproducible simulation
-Configuration-driven experiments allow the simulation workflow and figures to be regenerated from the repository.
-
-### KPI evaluation
-
-| Dimension | Example indicators |
-|---|---|
-| Economic | Annual electricity cost and related operating-cost measures |
-| Battery lifecycle | Equivalent full cycles, throughput and degradation-related metrics |
-| PV lifecycle | PV degradation / performance change |
-| Environmental | Avoided CO₂ emissions |
-| Operational | Dispatch profiles, energy flows and system-state trajectories |
-
-### Trade-off analysis
-The analysis layer supports investigation of competing objectives, including operational cost and degradation-related performance.
-
----
-
-## Example Outputs
-
-### Dispatch behaviour
-
-<p align="center">
-  <img src="figs/dispatch_full.png" alt="PV battery dispatch profile" width="92%">
-</p>
-
-### Economic KPI
-
-<p align="center">
-  <img src="figs/kpis_annual_cost_gbp.png" alt="Annual electricity cost KPI" width="82%">
-</p>
-
-### Battery utilisation
-
-<p align="center">
-  <img src="figs/kpis_equivalent_full_cycles.png" alt="Equivalent full cycles KPI" width="82%">
-</p>
-
-### Environmental performance
-
-<p align="center">
-  <img src="figs/kpis_co2_avoided_kg.png" alt="Avoided carbon emissions KPI" width="82%">
-</p>
-
-### Pareto analysis
-
-<p align="center">
-  <img src="figs/pareto.png" alt="Pareto trade-off analysis" width="84%">
-</p>
-
----
-
-## Installation
-
-### 1. Clone the repository
-
-```bash
+``` bash
 git clone https://github.com/ogatech4real/Material_Aware_Digital_Twin.git
 cd Material_Aware_Digital_Twin
 ```
@@ -201,160 +183,247 @@ cd Material_Aware_Digital_Twin
 
 **Windows**
 
-```bash
+``` bash
 python -m venv .venv
 .venv\Scripts\activate
 ```
 
 **Linux/macOS**
 
-```bash
+``` bash
 python3 -m venv .venv
 source .venv/bin/activate
 ```
 
 ### 3. Install dependencies
 
-```bash
+``` bash
 pip install -r requirements.txt
 ```
 
----
+### 4. Run the research workflow
 
-## Run the Digital Twin
-
-Execute the main workflow with:
-
-```bash
+``` bash
 python main.py
 ```
 
-Generated outputs are written primarily to:
+### 5. Launch the dashboard locally
 
-```text
-results/
-figs/
+``` bash
+streamlit run streamlit_app.py
 ```
 
----
+------------------------------------------------------------------------
 
-## Configuration
+## Computational Workflow
 
-The principal experiment settings are stored in:
-
-```text
-config.yaml
+``` text
+Input profiles
+     ↓
+PV + load + tariff + carbon signals
+     ↓
+System and inverter models
+     ↓
+Battery / PV degradation evaluation
+     ↓
+Fixed or adaptive supervisory weighting
+     ↓
+Deterministic dispatch execution
+     ↓
+Operational trajectories
+     ↓
+KPI + degradation + cost + runtime evaluation
 ```
 
-This centralises model parameters and makes experiments easier to reproduce and modify.
+The architecture deliberately separates **physical constraints**,
+**degradation modelling**, **supervisory decision logic**, and
+**evaluation**, allowing individual components to evolve without
+redesigning the complete workflow.
 
-Before running alternative scenarios, review the configuration carefully and retain a copy of the settings associated with any reported result.
+------------------------------------------------------------------------
 
----
+## Outputs
 
-## Reproducing the Analysis
+Primary simulation artefacts are written under `results/`.
 
-A typical reproducibility workflow is:
+Typical outputs include:
 
-```text
-1. Clone the repository
-2. Install the dependencies
-3. Review config.yaml
-4. Run python main.py
-5. Inspect results/
-6. Inspect figs/
-7. Compare scenarios and KPIs
-8. Explore the interactive Streamlit dashboard
-```
+-   time-resolved dispatch trajectories;
+-   battery state-of-charge evolution;
+-   grid import/export;
+-   battery throughput and equivalent full cycles;
+-   degradation-related indicators;
+-   annual or horizon-level operating cost;
+-   inverter conversion losses;
+-   operational carbon indicators; and
+-   scenario-level KPI summaries.
 
-The repository is structured so that modelling, evaluation and plotting remain separated into reusable modules.
+`results/special_issue/` contains outputs associated with the extended
+supervisory experiments.
 
----
+------------------------------------------------------------------------
 
-## Key Generated Figures
+## Reproducibility and Data
 
-| Output | Repository file |
-|---|---|
-| Full dispatch profile | `figs/dispatch_full.png` |
-| Annual cost KPI | `figs/kpis_annual_cost_gbp.png` |
-| Equivalent full cycles | `figs/kpis_equivalent_full_cycles.png` |
-| Avoided CO₂ emissions | `figs/kpis_co2_avoided_kg.png` |
-| Pareto trade-off analysis | `figs/pareto.png` |
-| Framework overview | `figs/overview framework.png` |
-| Streamlit dashboard | `figs/Streamlit dashboard.jpg` |
+The implementation supports reproducible computational experimentation
+through:
 
----
+-   explicit configuration;
+-   modular physical and degradation models;
+-   consistent scenario definitions;
+-   fixed simulation resolution;
+-   stored experiment outputs; and
+-   deterministic data-generation settings where applicable.
 
-## Reproducibility Notes
+The associated research uses controlled full-year simulation and
+supplementary validation with **UK-DALE residential demand data** and
+**PVGIS meteorological inputs**.
 
-The repository is intended to support transparent inspection of the implementation underlying the MAT-DT framework.
+Large/raw third-party datasets are not bundled in this repository. Users
+should obtain external datasets from their original providers and comply
+with their respective licences and citation requirements.
 
-For reproducible use:
+------------------------------------------------------------------------
 
-- retain the exact configuration used for each experiment;
-- keep software dependencies consistent;
-- avoid modifying generated results manually;
-- regenerate figures from the simulation pipeline after changing model parameters; and
-- record any externally supplied datasets or alternative assumptions separately.
+## Scope and Responsible Use
 
----
+This repository is a **research-grade decision-support implementation**,
+not a production battery-management or safety-critical inverter-control
+system.
 
-## Research Use
+The current framework intentionally uses reduced-order degradation
+models to preserve interpretability and computational tractability. PV
+degradation contributes to supervisory evaluation but remains exogenous
+to lower-level battery dispatch in the present implementation.
 
-The framework can support further investigation of topics such as:
+The current experimental formulation also assumes deterministic load,
+irradiance and tariff inputs. The implementation therefore should not be
+interpreted as providing certified battery-health estimation,
+field-deployment guarantees, or safety-critical control.
 
-- lifecycle-aware residential energy management;
-- PV–battery digital twins;
-- degradation-aware dispatch;
-- techno-economic assessment;
-- carbon-aware energy optimisation;
-- battery-health-conscious control;
-- robustness and sensitivity analysis;
-- digital-twin visualisation; and
-- future hardware-in-the-loop or real-system integration.
+------------------------------------------------------------------------
 
----
+## Forward Roadmap
 
-## Live Resources
+The codebase is structured for progressive extension rather than one-off
+reproduction.
 
-| Resource | Link |
-|---|---|
-| Source-code repository | [Material_Aware_Digital_Twin](https://github.com/ogatech4real/Material_Aware_Digital_Twin) |
-| Interactive dashboard | [pvbattdt.streamlit.app](https://pvbattdt.streamlit.app/) |
+### Higher-fidelity asset ageing
 
----
+Physics-informed and hybrid data-driven battery models incorporating
+nonlinear electrochemical, thermal and resistance-growth effects.
+
+### Uncertainty-aware operation
+
+Probabilistic, stochastic or robust treatment of load, irradiance,
+tariff and forecast uncertainty.
+
+### Learning-enabled supervision
+
+Operational-data-driven adaptation of degradation weights rather than
+exclusive reliance on predefined stress-response rules.
+
+### Carbon-aware dispatch
+
+Activation and validation of time-varying carbon objectives alongside
+cost and asset-health objectives.
+
+### Hardware and field validation
+
+Hardware-in-the-loop testing, inverter/controller integration and
+longitudinal evaluation on operational PV-BESS assets.
+
+### Multi-context deployment
+
+Extension from residential systems toward commercial facilities,
+community energy systems and microgrids.
+
+The longer-term architecture targets a digital twin capable of
+coordinating **economics, asset health, uncertainty, carbon performance
+and operational resilience** through a unified supervisory layer.
+
+------------------------------------------------------------------------
+
+## Extending the Framework
+
+The modular design supports replacement or extension of:
+
+-   battery degradation models;
+-   PV performance/degradation models;
+-   dispatch heuristics;
+-   adaptive supervisory policies;
+-   inverter representations;
+-   tariff structures;
+-   carbon-intensity signals;
+-   uncertainty models; and
+-   validation datasets.
+
+New methods should be benchmarked against the existing baseline and
+degradation-aware scenarios under equivalent boundary conditions.
+
+------------------------------------------------------------------------
 
 ## Citation
 
-If you use this repository, its code, results or framework in academic work, please cite the associated publication describing the **Materials-Aware Digital Twin for Solar–Battery Systems**.
+If you use this repository, please cite the associated research article
+once its final bibliographic record is available.
 
-The final bibliographic citation and DOI should be added here once formally assigned by the publisher.
+``` bibtex
+@article{ogabi_degradation_aware_dispatch_2026,
+  title  = {Intelligent degradation-aware dispatch for inverter-based photovoltaic-battery energy systems},
+  author = {Ogabi, Adewale and Aggarwal, Geetika and Ushasree, Palat Meethale and Pillai, Gobind},
+  year   = {2026},
+  note   = {Associated research article}
+}
+```
 
----
+The citation will be updated with the final journal metadata and DOI
+when available.
 
-## License
+------------------------------------------------------------------------
 
-This repository is distributed under the **MIT License**, subject to the terms provided in the repository's `LICENSE` file.
+## Authors
 
----
+**Adewale Ogabi**\
+School of Computing, Engineering & Digital Technologies, Teesside
+University, UK
 
-## Contact
+**Geetika Aggarwal** *(Corresponding Author)*\
+School of Computing, Engineering & Digital Technologies, Teesside
+University, UK
 
-**Adewale Ogabi**  
-School of Computing, Engineering and Digital Technologies  
-Teesside University, UK
+**Palat Meethale Ushasree**\
+School of Computing, Engineering & Digital Technologies, Teesside
+University, UK
 
-Email: `hello@adewaleogabi.info`  
-Alternative: `ogabi.adewale@gmail.com`
+**Gobind Pillai**\
+School of Computing, Engineering & Digital Technologies, Teesside
+University, UK
 
-GitHub: [@ogatech4real](https://github.com/ogatech4real)
+------------------------------------------------------------------------
 
----
+## Research Links
 
-<div align="center">
+-   **Repository:**
+    [github.com/ogatech4real/Material_Aware_Digital_Twin](https://github.com/ogatech4real/Material_Aware_Digital_Twin)
+-   **Interactive Digital Twin:**
+    [pvbattdt.streamlit.app](https://pvbattdt.streamlit.app/)
 
-### Materials-aware intelligence for more transparent PV–battery lifecycle decisions
+------------------------------------------------------------------------
 
-[Repository](https://github.com/ogatech4real/Material_Aware_Digital_Twin) · [Live Dashboard](https://pvbattdt.streamlit.app/)
+## Licence
 
-</div>
+See [`LICENSE`](LICENSE) for repository reuse conditions. Third-party
+datasets and external services remain subject to their respective
+licences and terms.
+
+------------------------------------------------------------------------
+
+## Project Status
+
+**Active research implementation --- 2026**
+
+The repository reflects the current degradation-aware digital-twin
+architecture and provides a forward-compatible foundation for
+uncertainty-aware control, higher-fidelity ageing models, carbon-aware
+operation and deployment-oriented validation.
