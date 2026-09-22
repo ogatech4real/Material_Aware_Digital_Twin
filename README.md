@@ -22,12 +22,11 @@ lifecycle-aware energy management.
 
 ## Framework at a Glance
 
-```{=html}
 <p align="center">
-```
-`<img src="figs/overview%20framework.png" alt="Overview of the degradation-aware PV-battery digital twin framework" width="850">`{=html}
-```{=html}
+  <img src="figs/overview%20framework.png" alt="Materials-Aware Digital Twin framework overview" width="92%">
 </p>
+
+<p align="center"><em>Overview of the Materials-Aware Digital Twin framework and its principal information and decision layers.</em></p>
 ```
 The implementation couples four functional layers:
 
@@ -94,28 +93,21 @@ validation scope of the associated manuscript.
 
 ------------------------------------------------------------------------
 
-## Interactive Digital Twin
+## Interactive Digital Twin Dashboard
 
-```{=html}
+The companion Streamlit application provides an interactive view of the digital-twin results, allowing rapid inspection of dispatch behaviour, degradation indicators and selected system KPIs.
+
+### Launch the dashboard
+
+**https://pvbattdt.streamlit.app/**
+
 <p align="center">
-```
-`<a href="https://pvbattdt.streamlit.app/">`{=html}
-`<img src="figs/Streamlit%20dashboard.jpg" alt="Streamlit dashboard for the materials-aware PV-battery digital twin" width="900">`{=html}
-`</a>`{=html}
-```{=html}
+  <a href="https://pvbattdt.streamlit.app/">
+    <img src="figs/Streamlit%20dashboard.jpg" alt="Streamlit digital twin dashboard" width="94%">
+  </a>
 </p>
-```
-The Streamlit interface provides an interactive layer for:
 
--   scenario selection;
--   degradation-weight exploration;
--   dispatch visualisation;
--   battery cycling and degradation indicators;
--   operating-cost comparison;
--   PV and battery performance assessment; and
--   KPI inspection.
-
-### [Launch the hosted Digital Twin →](https://pvbattdt.streamlit.app/)
+<p align="center"><em>Interactive Streamlit dashboard for examining system operation, dispatch behaviour, degradation metrics and performance indicators.</em></p>
 
 ------------------------------------------------------------------------
 
@@ -399,15 +391,6 @@ University, UK
 **Gobind Pillai**\
 School of Computing, Engineering & Digital Technologies, Teesside
 University, UK
-
-------------------------------------------------------------------------
-
-## Research Links
-
--   **Repository:**
-    [github.com/ogatech4real/Material_Aware_Digital_Twin](https://github.com/ogatech4real/Material_Aware_Digital_Twin)
--   **Interactive Digital Twin:**
-    [pvbattdt.streamlit.app](https://pvbattdt.streamlit.app/)
 
 ------------------------------------------------------------------------
 
