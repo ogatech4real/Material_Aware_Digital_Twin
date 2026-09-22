@@ -1,0 +1,10 @@
+{
+  "experiment": "Special-Issue adaptive supervisory + inverter extension",
+  "core_controller_preserved": true,
+  "adaptive_controller_module": "src/special_issue_extension.py",
+  "supervisor": "interpretable fuzzy rule-based supervisory layer",
+  "inverter_model": "steady-state efficiency and active-power rating constraints",
+  "lambda_pv_note": "PV weighting is diagnostic only because current reduced-order PV degradation is exogenous to dispatch.",
+  "n_steps": 35040,
+  "dt_minutes": 15
+}

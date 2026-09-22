@@ -1,0 +1,13 @@
+# Temporary files
+objects.txt
+
+# IDE metadata
+.idea/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Large raw datasets
+data/raw/
+*.dat
