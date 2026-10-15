@@ -4,6 +4,7 @@ import pandas as pd
 from .system_model import SystemParams, soc_next
 from .degradation_models import pv_degraded_power_kw, pv_temp_correction_kw, pv_degradation_cost_step
 from .optimizer import greedy_heuristic_step
+from .inverter_model import InverterParams, pv_ac_power, battery_ac_to_dc
 
 def _thresholds(conf: dict, scenario: str) -> tuple[float, float]:
     e = conf.get("economics", {})
@@ -22,9 +23,11 @@ def _lambda_batt(conf: dict, scenario: str) -> float:
     return float(e.get("lambda_batt_full", 1.2))         # ← stronger in Full
 
 def run_controller(df: pd.DataFrame, conf: dict, scenario: str = "full") -> pd.DataFrame:
-    params = SystemParams(conf); dt_h = params.dt_h
+    params = SystemParams(conf); inv = InverterParams.from_config(conf); dt_h = params.dt_h
     out = df.copy()
-    for col in ("soc","pch","pdis","pimp","pexp","pv_kw_eff","deg_cost_pv"): out[col] = 0.0
+    for col in ("soc", "pch", "pdis", "pimp", "pexp", "pv_kw_eff", "pv_kw_ac",
+                "deg_cost_pv", "pv_inverter_loss_kw", "batt_inverter_loss_kw"):
+        out[col] = 0.0
 
     soc = float((conf["battery"]["soc_min"] + conf["battery"]["soc_max"])/2.0)
     price_low, price_high = _thresholds(conf, scenario)
@@ -39,17 +42,20 @@ def run_controller(df: pd.DataFrame, conf: dict, scenario: str = "full") -> pd.D
         "batt":     (max(params.soc_min, 0.15), min(params.soc_max, 0.85)),
         "full":     (max(params.soc_min, 0.20), min(params.soc_max, 0.80)),
     }[scenario]
-    temp_discharge_limit_c = 35.0  # a touch stricter for UK summers
+    temp_discharge_limit_c = 35.0  # preserve the submitted thermal threshold
+
+    soc = min(soc_win[1], max(soc_win[0], soc))
 
     class _ParamView:
         dt_h=params.dt_h; e_nom_kwh=params.e_nom_kwh
-        eta_ch=params.eta_ch; eta_dis=params.eta_dis
-        p_ch_max=params.p_ch_max; p_dis_max=params.p_dis_max
+        eta_ch=params.eta_ch * inv.eta_batt; eta_dis=params.eta_dis * inv.eta_batt
+        p_ch_max=min(params.p_ch_max, inv.p_batt_rated_kw)
+        p_dis_max=min(params.p_dis_max, inv.p_batt_rated_kw)
         soc_min=soc_win[0]; soc_max=soc_win[1]
         min_economic_spread_gbp_per_kwh = params.min_economic_spread_gbp_per_kwh
 
     econ = conf.get("economics", {})
-    # export discouraged—keeps CO2 and cost deltas tight
+    # Preserve the submitted no-battery-export policy.
     peak_export_thr = float(econ.get("peak_export_threshold_gbp_per_kwh", 0.30))
     allow_export = False  # keep export only from PV, not from battery arbitrage
 
@@ -63,7 +69,7 @@ def run_controller(df: pd.DataFrame, conf: dict, scenario: str = "full") -> pd.D
         t_hours = t*dt_h
         pv_age = pv_degraded_power_kw(pv_raw, t_hours, annual_rate=annual_deg)
         pv_eff = pv_temp_correction_kw(pv_age, temp_c, t_ref_c=t_ref_c, beta_per_c=beta_per_c)
-        out.iat[t, out.columns.get_loc("pv_kw_eff")] = pv_eff
+        pv_ac, pv_inv_loss = pv_ac_power(pv_eff, inv)
 
         # TOU nudges for Baseline: 0–6 charge, 16–22 discharge
         try: hour = int(out.index[t].hour)
@@ -77,7 +83,7 @@ def run_controller(df: pd.DataFrame, conf: dict, scenario: str = "full") -> pd.D
             p_high_use = 1e9  # suppress discharging
 
         pch, pdis, pimp, pexp = greedy_heuristic_step(
-            pv_kw=pv_eff,
+            pv_kw=pv_ac,
             load_kw=load_kw,
             price_imp=price_imp,
             price_exp=price_exp,
@@ -89,19 +95,28 @@ def run_controller(df: pd.DataFrame, conf: dict, scenario: str = "full") -> pd.D
         )
 
         # Optional: suppress peak-time discharge->export pathway
-        if not allow_export and pexp > max(0.0, pv_eff - load_kw):
+        if not allow_export and pexp > max(0.0, pv_ac - load_kw):
             # cap export to PV surplus only
-            over = pexp - max(0.0, pv_eff - load_kw)
-            pexp -= over; pdis = max(0.0, pdis - over)
+            over = pexp - max(0.0, pv_ac - load_kw)
+            pexp -= over
+            pdis = max(0.0, pdis - over)
+            # Reconcile grid import if the optional adjustment changes supply.
+            pimp = max(0.0, load_kw + pch + pexp - pv_ac - pdis)
+
+        pch_dc, pdis_dc, batt_inv_loss = battery_ac_to_dc(pch, pdis, inv)
 
         out.iat[t, out.columns.get_loc("soc")]  = soc
         out.iat[t, out.columns.get_loc("pch")]  = pch
         out.iat[t, out.columns.get_loc("pdis")] = pdis
         out.iat[t, out.columns.get_loc("pimp")] = pimp
         out.iat[t, out.columns.get_loc("pexp")] = pexp
+        out.iat[t, out.columns.get_loc("pv_kw_eff")] = pv_ac
+        out.iat[t, out.columns.get_loc("pv_kw_ac")] = pv_ac
+        out.iat[t, out.columns.get_loc("pv_inverter_loss_kw")] = pv_inv_loss
+        out.iat[t, out.columns.get_loc("batt_inverter_loss_kw")] = batt_inv_loss
         out.iat[t, out.columns.get_loc("deg_cost_pv")] = pv_degradation_cost_step(pv_raw, pv_eff, price_imp, dt_h)
 
-        soc = soc_next(soc, pch, pdis, dt_h, params.eta_ch, params.eta_dis, params.e_nom_kwh)
+        soc = soc_next(soc, pch_dc, pdis_dc, dt_h, params.eta_ch, params.eta_dis, params.e_nom_kwh)
         if soc < soc_win[0]: soc = soc_win[0]
         elif soc > soc_win[1]: soc = soc_win[1]
 

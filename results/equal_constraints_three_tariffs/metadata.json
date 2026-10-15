@@ -1,0 +1,37 @@
+{
+  "reference_input": "data/sim_input.csv",
+  "reference_input_sha256": "27d0c56896189d7a7644dd88418853d5573f0061af47a4f934e4d417e952bb1a",
+  "input_intervals": 35040,
+  "time_step_hours": 0.25,
+  "rolling_window_intervals": 8,
+  "smoothed_tariff": "Causal trailing two-hour rolling mean of original import tariff",
+  "independent_tariff": "0.30 + 0.055*sin(2*pi*t_hours/24) + 0.025*sin(2*pi*t_hours/168 + 0.7) GBP/kWh",
+  "synthetic_tariffs_are_not_measured": true,
+  "unchanged_across_weight_variants": "All controller, thermal-guard, battery, PV, load, import/export parameters except lambda_batt_min/max",
+  "variants": {
+    "No_battery_penalty": {
+      "lambda_min": 0.0,
+      "lambda_max": 0.0
+    },
+    "Fixed_low_weight": {
+      "lambda_min": 0.0,
+      "lambda_max": 0.0
+    },
+    "Fixed_mid_weight": {
+      "lambda_min": 0.4,
+      "lambda_max": 0.4
+    },
+    "Fixed_high_weight": {
+      "lambda_min": 0.8,
+      "lambda_max": 0.8
+    },
+    "Adaptive_weight": {
+      "lambda_min": 0.0,
+      "lambda_max": 0.8
+    }
+  },
+  "original_unique_import_prices": 3,
+  "smoothed_unique_import_prices": 20,
+  "independent_unique_import_prices": 668,
+  "existing_source_files_modified": false
+}

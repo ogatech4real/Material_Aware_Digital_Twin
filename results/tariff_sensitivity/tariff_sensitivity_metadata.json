@@ -1,0 +1,16 @@
+{
+  "reference": "data/sim_input.csv; unchanged",
+  "sensitivity": "synthetic causal trailing two-hour mean of import price only",
+  "synthetic_not_measured": true,
+  "rolling_window_intervals": 8,
+  "input_rows": 35040,
+  "original_unique_import_prices": 3,
+  "synthetic_unique_import_prices": 20,
+  "other_input_columns_identical": true,
+  "model_parameters_unchanged": true,
+  "independent_synthetic_tariff": "0.30 + 0.055*sin(2*pi*t_hours/24) + 0.025*sin(2*pi*t_hours/168 + 0.7) GBP/kWh",
+  "independent_synthetic_not_measured": true,
+  "independent_unique_import_prices": 668,
+  "independent_other_input_columns_identical": true,
+  "reference_input_sha256": "27d0c56896189d7a7644dd88418853d5573f0061af47a4f934e4d417e952bb1a"
+}

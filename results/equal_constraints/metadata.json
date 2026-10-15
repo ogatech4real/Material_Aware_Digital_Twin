@@ -1,0 +1,34 @@
+{
+  "input": "data\\sim_input.csv",
+  "input_sha256": "27d0c56896189d7a7644dd88418853d5573f0061af47a4f934e4d417e952bb1a",
+  "input_intervals": 35040,
+  "comparison": "Same adaptive dispatcher and all identical constraints; only battery weight is constant or state-dependent",
+  "thermal_guard": "enabled identically in all cases",
+  "lambda_bounds": {
+    "min": 0.0,
+    "max": 0.8
+  },
+  "variants": {
+    "No_battery_penalty": {
+      "lambda_min": 0.0,
+      "lambda_max": 0.0
+    },
+    "Fixed_low_weight": {
+      "lambda_min": 0.0,
+      "lambda_max": 0.0
+    },
+    "Fixed_mid_weight": {
+      "lambda_min": 0.4,
+      "lambda_max": 0.4
+    },
+    "Fixed_high_weight": {
+      "lambda_min": 0.8,
+      "lambda_max": 0.8
+    },
+    "Adaptive_weight": {
+      "lambda_min": 0.0,
+      "lambda_max": 0.8
+    }
+  },
+  "existing_source_files_modified": false
+}

@@ -14,8 +14,11 @@ def greedy_heuristic_step(
 
     headroom_kwh = max(0.0, (params.soc_max - soc) * params.e_nom_kwh)
     avail_kwh    = max(0.0, (soc - params.soc_min) * params.e_nom_kwh)
-    ch_cap_kw  = min(params.p_ch_max, headroom_kwh / dt)
-    dis_cap_kw = min(params.p_dis_max, avail_kwh   / dt)
+    # Commands and efficiency factors must use the same power-side convention.
+    # For AC-side inverter commands, callers supply combined battery/inverter
+    # efficiencies; otherwise the battery efficiencies are used directly.
+    ch_cap_kw = min(params.p_ch_max, headroom_kwh / (params.eta_ch * dt))
+    dis_cap_kw = min(params.p_dis_max, avail_kwh * params.eta_dis / dt)
 
     net = pv_kw - load_kw
     if net >= 0:

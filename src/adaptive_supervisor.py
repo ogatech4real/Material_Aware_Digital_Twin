@@ -1,4 +1,4 @@
-"""Interpretable fuzzy supervisory layer for the Special-Issue extension.
+"""Interpretable bounded-score supervisory layer for the Special-Issue extension.
 
 The supervisor is intentionally lightweight: it does not replace the deterministic
 lower-level dispatcher. It maps measured operating state to adaptive degradation
@@ -34,12 +34,13 @@ def adaptive_weights(
     *, soc: float, cell_temp_c: float, load_kw: float, pv_kw: float,
     price_import: float, conf: dict
 ) -> SupervisorOutput:
-    """Return adaptive degradation weights using transparent fuzzy rules.
+    """Return bounded state-dependent weights using transparent ramp scores.
 
     Inputs are normalized by configured physical/economic ranges. Rules increase
     battery protection at low/high SoC and high temperature, while PV weighting
     increases with module temperature and high available PV. The output is bounded
     and deterministic, making the supervisory decision auditable.
+    PV weight is diagnostic in the current dispatcher; thermal protection is active.
     """
     a = conf.get("adaptive_supervisor", {})
     b = conf.get("battery", {})
@@ -68,7 +69,7 @@ def adaptive_weights(
     p_hi = float(econ.get("baseline_price_high", 0.33))
     price_stress = _ramp_up(price_import, p_lo, max(p_hi, p_lo + 1e-6))
 
-    # Mamdani-style rule aggregation expressed as bounded weighted scores.
+    # Weighted ramp-score aggregation (not a Mamdani inference engine).
     batt_stress = _clip01(0.45 * soc_stress + 0.35 * thermal + 0.10 * load_stress + 0.10 * price_stress)
     pv_stress = _clip01(0.65 * thermal + 0.35 * pv_avail)
 

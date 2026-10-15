@@ -1,7 +1,7 @@
 # Intelligent Degradation-Aware Dispatch for PV-Battery Energy Systems
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
-[![Dashboard](https://img.shields.io/badge/Interactive%20Digital%20Twin-Streamlit-FF4B4B.svg)](https://pvbattdt.streamlit.app/)
+[![Dashboard](https://img.shields.io/badge/Simulation%20Dashboard-Streamlit-FF4B4B.svg)](https://pvbattdt.streamlit.app/)
 [![License](https://img.shields.io/badge/License-See%20LICENSE-lightgrey.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Research%20Implementation-success.svg)](#)
 
@@ -11,25 +11,22 @@ supervisory dispatch framework** for inverter-interfaced photovoltaic
 
 The framework moves beyond cost-only energy management by embedding
 **battery ageing**, **PV performance loss**, **inverter constraints**,
-and **adaptive degradation weighting** into operational dispatch. It
-provides a lightweight digital-twin decision-support architecture for
-lifecycle-aware energy management.
+and **adaptive degradation weighting** into operational dispatch. It provides a lightweight, **simulation-based, digital-twin-inspired**
+decision-support architecture for degradation-informed energy management.
+The implemented controller is a **deterministic rule-based heuristic**, not
+a numerical optimisation solver.
 
-> **Interactive digital twin:**
+> **Interactive simulation dashboard:**
 > [pvbattdt.streamlit.app](https://pvbattdt.streamlit.app/)
 
 ------------------------------------------------------------------------
 
 ## Framework at a Glance
 
-```{=html}
 <p align="center">
-```
-`<img src="figs/overview%20framework.png" alt="Overview of the degradation-aware PV-battery digital twin framework" width="850">`{=html}
-```{=html}
+<img src="figs/overview%20framework.png" alt="Overview of the degradation-aware PV-battery simulation framework" width="850">
 </p>
-```
-The implementation couples four functional layers:
+The implementation conceptually couples four functional layers:
 
 -   **System physics** --- PV generation, battery state of charge, grid
     exchange, tariffs and inverter conversion.
@@ -38,26 +35,26 @@ The implementation couples four functional layers:
 -   **Supervisory intelligence** --- degradation-weighted operational
     decisions with fixed or adaptive control weights.
 -   **Evaluation** --- operating cost, equivalent full cycles,
-    degradation indicators, inverter losses, carbon indicators and
-    runtime.
+    degradation indicators, inverter losses and runtime.
 
 Four operating strategies are supported:
 
   -----------------------------------------------------------------------
   Strategy                            Operational role
   ----------------------------------- -----------------------------------
-  **Baseline**                        Cost-oriented dispatch without
-                                      degradation weighting
+  **Baseline**                        Reference cost-oriented rule-based
+                                      dispatch policy
 
-  **Battery-Aware**                   Introduces battery degradation
-                                      penalties
+  **Battery-Aware**                   Conservative battery operating
+                                      constraints and degradation accounting
 
-  **Battery+PV-Aware**                Adds PV performance/degradation
-                                      awareness to supervisory evaluation
+  **Battery+PV-Aware**                Uses modelled PV cell temperature
+                                      to restrict battery discharge; PV
+                                      ageing remains prescribed
 
-  **Adaptive-Supervisory**            Dynamically adjusts degradation
-                                      weights according to
-                                      operating-state stress
+  **Adaptive-Supervisory**            Adjusts battery degradation weight
+                                      using normalised operating-state
+                                      indicators
   -----------------------------------------------------------------------
 
 ------------------------------------------------------------------------
@@ -73,38 +70,56 @@ photovoltaic-battery energy systems**
 and Gobind Pillai.
 
 The study evaluates the framework over a **full-year simulation at
-15-minute resolution** and supplements the controlled experiments with
-measured residential demand and meteorological inputs.
+15-minute resolution**, with additional tariff-sensitivity and
+equal-constraints experiments, and supplements these with measured
+residential demand and historical meteorological inputs.
 
-### Reported outcomes
+### Reported outcomes (revised manuscript)
 
--   **18--29% reduction** in annual battery cycling for the fixed
-    degradation-aware strategies relative to baseline.
--   Annual operating-cost increases maintained **below 3%** in the
-    full-year analysis.
--   **Adaptive-Supervisory:** **11.5% cycling reduction** relative to
-    baseline with a **2.52% annual cost increase**.
--   Mean adaptive control-step runtime of approximately **0.295 ms**.
--   Measured-data validation preserves the degradation--cost trade-off,
-    with **24--27% lower equivalent full cycles** while mean daily
-    operating cost remains approximately **within ±1% of baseline**.
+The annual comparison uses **35,040 intervals at 15-minute resolution**.
+Results are deterministic and policy-specific; the fixed and adaptive
+strategies also differ in operating constraints.
 
-These results should be interpreted within the assumptions and
-validation scope of the associated manuscript.
+| Strategy | Annual grid operating cost (GBP) | Battery EFCs | EFC reduction vs. baseline |
+| --- | ---: | ---: | ---: |
+| Baseline | 1,076.27 | 281.59 | — |
+| Battery-Aware | 1,075.13 | 230.81 | 18.03% |
+| Battery+PV-Aware | 1,096.49 | 199.66 | 29.10% |
+| Adaptive-Supervisory | 1,056.74 | 257.68 | 8.49% |
+
+**Interpretation:** The fixed Battery+PV-Aware policy achieves the largest
+cycling reduction, while the adaptive policy exhibits a different
+cost–cycling balance. Because the policies have different constraints,
+these headline differences **do not isolate the effect of adaptive weighting**.
+
+Controlled equal-constraints experiments and a separate supervisory
+ablation investigate the reference time-of-use (TOU), causally smoothed
+TOU and independently generated variable synthetic tariffs. Under the
+reference TOU, changes to the battery weighting do not change dispatch;
+under the supplementary tariff profiles, weighting can influence cycling
+and cost. Adaptive weighting is **conditionally useful**, not universally
+superior to fixed weighting.
+
+Supplementary simulation uses **UK-DALE measured residential demand** and
+**PVGIS historical meteorological inputs** over approximately 198.25 days
+(19,032 15-minute intervals). PV generation remains **model-derived**,
+and electricity tariffs are prescribed. The measured-input evaluation
+supports qualitative comparisons but is **not physical PV–BESS validation**.
+
+Battery capacity-fade outputs are **model-derived relative indicators**
+using illustrative, non-chemistry-calibrated coefficients; they are not
+validated lifetime-extension estimates. Reported per-step runtimes are
+software execution measurements, not controller hardware latency.
 
 ------------------------------------------------------------------------
 
-## Interactive Digital Twin
+## Interactive Simulation Dashboard
 
-```{=html}
 <p align="center">
-```
-`<a href="https://pvbattdt.streamlit.app/">`{=html}
-`<img src="figs/Streamlit%20dashboard.jpg" alt="Streamlit dashboard for the materials-aware PV-battery digital twin" width="900">`{=html}
-`</a>`{=html}
-```{=html}
+<a href="https://pvbattdt.streamlit.app/">
+<img src="figs/Streamlit%20dashboard.jpg" alt="Streamlit dashboard for the PV-battery simulation framework" width="900">
+</a>
 </p>
-```
 The Streamlit interface provides an interactive layer for:
 
 -   scenario selection;
@@ -115,11 +130,15 @@ The Streamlit interface provides an interactive layer for:
 -   PV and battery performance assessment; and
 -   KPI inspection.
 
-### [Launch the hosted Digital Twin →](https://pvbattdt.streamlit.app/)
+### [Launch the hosted dashboard →](https://pvbattdt.streamlit.app/)
 
 ------------------------------------------------------------------------
 
 ## Repository Architecture
+
+The tree below reflects the structure documented in the supplied README;
+individual scripts and generated artefacts should be checked against the
+current repository checkout.
 
 ``` text
 Material_Aware_Digital_Twin/
@@ -220,7 +239,7 @@ streamlit run streamlit_app.py
 ``` text
 Input profiles
      ↓
-PV + load + tariff + carbon signals
+PV + load + tariff inputs
      ↓
 System and inverter models
      ↓
@@ -291,15 +310,24 @@ This repository is a **research-grade decision-support implementation**,
 not a production battery-management or safety-critical inverter-control
 system.
 
-The current framework intentionally uses reduced-order degradation
-models to preserve interpretability and computational tractability. PV
-degradation contributes to supervisory evaluation but remains exogenous
-to lower-level battery dispatch in the present implementation.
+The current framework uses reduced-order degradation models to preserve
+interpretability and computational tractability. Its battery ageing
+coefficients are illustrative and not calibrated to a specific chemistry.
+The Battery+PV-Aware policy uses **modelled PV cell temperature** as a
+supervisory signal to restrict battery discharge above a threshold;
+this does **not** actively control PV material degradation. PV ageing
+follows a prescribed, dispatch-independent trajectory. The PV-loss
+weighting coefficient is retained for assessment and does not directly
+modify dispatch.
 
-The current experimental formulation also assumes deterministic load,
-irradiance and tariff inputs. The implementation therefore should not be
-interpreted as providing certified battery-health estimation,
-field-deployment guarantees, or safety-critical control.
+The controlled annual experiments use deterministic synthetic operating
+profiles; supplementary experiments apply measured load and historical
+meteorological inputs to the same simulated system. No real-time data
+synchronisation, bidirectional physical-system interaction, hardware-in-
+the-loop testing or physical PV–BESS validation is demonstrated. Cost
+differences are deterministic; statistical significance has not been
+established. This is **not a deployed, physically synchronised digital
+twin**, certified battery-health estimator or safety-critical controller.
 
 ------------------------------------------------------------------------
 
@@ -323,10 +351,12 @@ tariff and forecast uncertainty.
 Operational-data-driven adaptation of degradation weights rather than
 exclusive reliance on predefined stress-response rules.
 
-### Carbon-aware dispatch
+### Lifecycle environmental assessment
 
-Activation and validation of time-varying carbon objectives alongside
-cost and asset-health objectives.
+Develop and validate a physically grounded emissions or lifecycle
+assessment model before reporting carbon-related performance. **No
+operational carbon index or avoided-emissions estimate is reported in
+the revised manuscript.**
 
 ### Hardware and field validation
 
@@ -339,7 +369,7 @@ Extension from residential systems toward commercial facilities,
 community energy systems and microgrids.
 
 The longer-term architecture targets a digital twin capable of
-coordinating **economics, asset health, uncertainty, carbon performance
+coordinating **economics, asset health, uncertainty, environmental assessment
 and operational resilience** through a unified supervisory layer.
 
 ------------------------------------------------------------------------
@@ -365,15 +395,16 @@ degradation-aware scenarios under equivalent boundary conditions.
 
 ## Citation
 
-If you use this repository, please cite the associated research article
-once its final bibliographic record is available.
+If you use this repository, please cite the associated manuscript or
+research article once its final bibliographic record is available.
+The manuscript is under revision; no final publication DOI is claimed.
 
 ``` bibtex
 @article{ogabi_degradation_aware_dispatch_2026,
   title  = {Intelligent degradation-aware dispatch for inverter-based photovoltaic-battery energy systems},
   author = {Ogabi, Adewale and Aggarwal, Geetika and Ushasree, Palat Meethale and Pillai, Gobind},
   year   = {2026},
-  note   = {Associated research article}
+  note   = {Manuscript under revision; publication metadata pending}
 }
 ```
 
@@ -406,7 +437,7 @@ University, UK
 
 -   **Repository:**
     [github.com/ogatech4real/Material_Aware_Digital_Twin](https://github.com/ogatech4real/Material_Aware_Digital_Twin)
--   **Interactive Digital Twin:**
+-   **Simulation Dashboard:**
     [pvbattdt.streamlit.app](https://pvbattdt.streamlit.app/)
 
 ------------------------------------------------------------------------
@@ -423,7 +454,8 @@ licences and terms.
 
 **Active research implementation --- 2026**
 
-The repository reflects the current degradation-aware digital-twin
-architecture and provides a forward-compatible foundation for
-uncertainty-aware control, higher-fidelity ageing models, carbon-aware
-operation and deployment-oriented validation.
+The repository documents a simulation-based, digital-twin-inspired
+degradation-aware dispatch research implementation. The revised manuscript
+reports deterministic comparisons, controlled weighting experiments and
+measured-input simulation, with physical validation and lifecycle
+environmental assessment reserved for future work.

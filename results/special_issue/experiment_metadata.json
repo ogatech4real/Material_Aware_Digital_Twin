@@ -1,10 +1,15 @@
 {
-  "experiment": "Special-Issue adaptive supervisory + inverter extension",
-  "core_controller_preserved": true,
+  "experiment": "Special-Issue corrected fixed and adaptive heuristic dispatch comparison",
+  "generated_utc": "2026-10-12T11:08:05.685804+00:00",
+  "code_status": "revised_methodology; not the originally submitted controller",
+  "dispatch_method": "deterministic rule-based heuristic; no optimisation solver",
+  "runtime_note": "Wall-clock full-simulation runtime divided by steps; includes Python loop and data handling, not isolated control latency or hardware timing.",
   "adaptive_controller_module": "src/special_issue_extension.py",
   "supervisor": "interpretable fuzzy rule-based supervisory layer",
-  "inverter_model": "steady-state efficiency and active-power rating constraints",
+  "inverter_model": "common steady-state PV/battery inverter conversion and rating limits in all four scenarios",
+  "scenario_note": "Scenario thresholds, SoC windows and thermal rules differ; differences cannot be attributed solely to degradation weights.",
   "lambda_pv_note": "PV weighting is diagnostic only because current reduced-order PV degradation is exogenous to dispatch.",
   "n_steps": 35040,
+  "input_file": "data/sim_input.csv",
   "dt_minutes": 15
 }

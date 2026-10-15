@@ -1,4 +1,12 @@
 # src/degradation_models.py
+"""Reduced-order ageing and PV performance-loss proxies.
+
+Calendar/cycle fade are post-processing estimates, not a calibrated cell-life
+prediction or the marginal battery penalty used by the dispatcher.
+PV ageing is exogenous; the PV loss-cost proxy combines ageing and thermal
+derating and does not imply active control of PV ageing.
+Existing numerical formulae are preserved for submitted-run traceability.
+"""
 from __future__ import annotations
 import numpy as np
 
@@ -14,6 +22,7 @@ def calendar_fade_Ah(dt_h, soc_avg, temp_c, *, k_cal=1.2e-5, Ea_over_R=4000.0):
     return float(k_cal*np.exp(-Ea_over_R/max(T_k,1.0))*f_soc*float(dt_h))
 
 def cycle_fade_Ah_from_DoD(DoD_list, *, k_cyc=2.5e-4, alpha=1.5):
+    """Power-law fade proxy; caller supplies DoD increments, not rainflow cycles."""
     if not DoD_list: return 0.0
     return float(sum(k_cyc*(max(0.0,min(1.0,d))**alpha) for d in DoD_list))
 
@@ -34,5 +43,6 @@ def pv_temp_correction_kw(pv_kw, temp_c, *, t_ref_c=25.0, beta_per_c=0.004):
     return float(pv_kw)*(1.0 - float(beta_per_c)*(float(temp_c)-float(t_ref_c)))
 
 def pv_degradation_cost_step(pv_kw_raw, pv_kw_temp, price_ref_gbp_per_kwh, dt_h):
+    """Monetise combined PV ageing/temperature derating; not ageing alone."""
     lost_kw = max(0.0, float(pv_kw_raw)-float(pv_kw_temp))
     return float(lost_kw)*float(price_ref_gbp_per_kwh)*float(dt_h)

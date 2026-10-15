@@ -1,13 +1,32 @@
-# Temporary files
-objects.txt
-
-# IDE metadata
+# IDE and temporary files
 .idea/
-
-# Python cache
+.vscode/
 __pycache__/
 *.pyc
+.pytest_cache/
+.venv/
+venv/
+objects.txt
 
-# Large raw datasets
+# Raw and large datasets
 data/raw/
 *.dat
+*.h5
+*.hdf5
+*.parquet
+*.zip
+*.7z
+*.npy
+*.npz
+
+# Generated data and simulation outputs
+results/**/*.csv
+data/ukdale.csv
+data/pvgis.csv
+
+# Credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key

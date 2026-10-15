@@ -1,0 +1,47 @@
+{
+  "status": "passed",
+  "created_utc": "2026-10-12T15:29:25.730381+00:00",
+  "data_sources": {
+    "raw_files": [
+      "data\\raw\\pvgis_seriescalc_2012.csv",
+      "data\\raw\\pvgis_seriescalc_2013_api.csv"
+    ],
+    "pvgis_location_lat": 51.752,
+    "pvgis_location_lon": -1.257,
+    "pvgis_location_is_proxy": true,
+    "fetched_years": []
+  },
+  "source_load_path": "data/ukdale.csv",
+  "raw_load_file_available": true,
+  "time_basis": "naive timestamps treated as UTC; PVGIS HH:11 floored to HH:00",
+  "weather_15min_method": "time-linear interpolation of hourly PVGIS observations",
+  "load_missing_policy": "never interpolated; select longest contiguous 15-minute segment",
+  "tariff_and_carbon": "synthetic config-derived profiles; not observed market or emissions data",
+  "pv_generation": "p_dc_stc_kw * G(i)/1000; temperature effects applied by controller",
+  "input_rows": 34951,
+  "missing_load_rows": 4113,
+  "valid_rows_all_segments": 30838,
+  "number_of_segments": 49,
+  "selected_start": "2013-04-11 18:00:00",
+  "selected_end": "2013-10-26 23:45:00",
+  "selected_rows": 19032,
+  "selected_days": 198.25,
+  "selected_load_kwh": 1530.7930241014749,
+  "selected_pv_raw_kwh": 2955.325662,
+  "selected_daylight_positive_pv_intervals": 5526,
+  "selected_ambient_range_c": [
+    -0.82,
+    29.56
+  ],
+  "output_columns": [
+    "timestamp",
+    "load_kw",
+    "pv_kw_raw",
+    "price_import_gbp_per_kwh",
+    "price_export_gbp_per_kwh",
+    "ambient_c",
+    "cell_temp_c",
+    "carbon_intensity"
+  ],
+  "warning": "Measured-input dispatch test; not physical PV-battery digital twin validation."
+}

@@ -1,0 +1,42 @@
+{
+  "experiment": "Supplementary UK-DALE demand and PVGIS meteorological input dispatch comparison",
+  "generated_utc": "2026-10-12T15:45:53.006669+00:00",
+  "input_file": "data/measured_validation_input.csv",
+  "input_sha256": "8ba5b0d6f7f56e7873fe93e71db7b85551b15178565f2baead4e653225a67553",
+  "config_sha256": "f2c750360edffcf48613c07729aa054906852f17cc17967722d52b8a3badb04b",
+  "n_steps": 19032,
+  "dt_minutes": 15.0,
+  "start_timestamp": "2013-04-11 18:00:00",
+  "end_timestamp": "2013-10-26 23:45:00",
+  "period_days": 198.25,
+  "source_qualification": "UK-DALE measured demand; PVGIS model-derived historical weather; PV generation calculated, not measured",
+  "weather_location_qualification": "PVGIS coordinates currently approximate Oxford proxy; confirm before publication",
+  "time_qualification": "Input preprocessing treats naive timestamps as UTC and floors PVGIS HH:11 to HH:00; verify source conventions",
+  "tariff_qualification": "Tariff and carbon-intensity profiles are synthetic assumptions, not observed market/emissions data",
+  "kpi_qualification": "Legacy evaluator annual_cost_gbp renamed period_cost_gbp; no annual extrapolation; negative cost is net export revenue; EFC is discharge-throughput proxy",
+  "controller_qualification": "Same corrected fixed and adaptive rule-based controllers as synthetic experiment; no solver or hardware validation",
+  "scenario_qualification": "Fixed policies have different operating rules/SoC windows; differences cannot be attributed solely to degradation weights",
+  "runtime_qualification": "Full Python simulation elapsed time / intervals, not isolated embedded controller latency",
+  "checks": {
+    "Baseline": {
+      "max_ac_balance_residual_kw": 8.881784197001252e-16,
+      "min_soc": 0.1,
+      "max_soc": 0.95
+    },
+    "Batt-Aware": {
+      "max_ac_balance_residual_kw": 4.440892098500626e-16,
+      "min_soc": 0.15,
+      "max_soc": 0.85
+    },
+    "Batt+PV-Aware": {
+      "max_ac_balance_residual_kw": 4.440892098500626e-16,
+      "min_soc": 0.2,
+      "max_soc": 0.8
+    },
+    "Adaptive-Supervisory": {
+      "max_ac_balance_residual_kw": 4.440892098500626e-16,
+      "min_soc": 0.10903811820553658,
+      "max_soc": 0.9
+    }
+  }
+}

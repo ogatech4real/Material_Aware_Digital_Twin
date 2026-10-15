@@ -35,7 +35,6 @@ def run_adaptive_controller(df: pd.DataFrame, conf: dict) -> pd.DataFrame:
     price_low = float(a.get("price_low", econ.get("batt_price_low", 0.25)))
     price_high = float(a.get("price_high", econ.get("batt_price_high", 0.315)))
     batt_deg_pen = float(econ.get("batt_deg_marginal_gbp_per_kwh", 0.03))
-    eps = 1e-9
 
     annual_deg = float(conf["pv"]["annual_deg_rate"])
     t_ref_c = float(conf["pv"]["t_ref_c"])
@@ -44,8 +43,9 @@ def run_adaptive_controller(df: pd.DataFrame, conf: dict) -> pd.DataFrame:
     class _ParamView:
         dt_h = params.dt_h
         e_nom_kwh = params.e_nom_kwh
-        eta_ch = params.eta_ch
-        eta_dis = params.eta_dis
+        # Dispatch commands are AC-side; the SoC model uses DC-side power.
+        eta_ch = params.eta_ch * inv.eta_batt
+        eta_dis = params.eta_dis * inv.eta_batt
         p_ch_max = min(params.p_ch_max, inv.p_batt_rated_kw)
         p_dis_max = min(params.p_dis_max, inv.p_batt_rated_kw)
         soc_min = soc_lo
@@ -69,21 +69,22 @@ def run_adaptive_controller(df: pd.DataFrame, conf: dict) -> pd.DataFrame:
             price_import=price_imp, conf=conf,
         )
 
-        # Battery degradation is a direct marginal dispatch penalty.
-        price_imp_eff = price_imp + sup.lambda_batt * batt_deg_pen
+        # Higher battery stress must reduce, not increase, the incentive to
+        # discharge. Pass the wear cost through the dispatcher's penalty input.
+        adaptive_batt_penalty = sup.lambda_batt * batt_deg_pen
 
         # PV loss is exogenous to dispatch in the current reduced-order model.
         # lambda_pv is therefore recorded as a supervisory diagnostic rather than
         # incorrectly forcing it into the dispatch price. This closes the prior
         # code/manuscript ambiguity without inventing a controllable PV-ageing path.
-        pv_loss_marginal = pv_loss_cost / (max(pv_ac, 0.0) * dt_h + eps)
 
         # Thermal supervisory protection raises the discharge trigger smoothly.
         high_use = price_high + float(a.get("thermal_price_guard_gbp_per_kwh", 0.08)) * sup.thermal_protection
 
         pch_ac, pdis_ac, pimp, pexp = greedy_heuristic_step(
-            pv_kw=pv_ac, load_kw=load_kw, price_imp=price_imp_eff, price_exp=price_exp,
+            pv_kw=pv_ac, load_kw=load_kw, price_imp=price_imp, price_exp=price_exp,
             soc=soc, params=_ParamView, price_low=price_low, price_high=high_use,
+            batt_deg_penalty=adaptive_batt_penalty,
         )
 
         # Existing policy: battery does not export for arbitrage; PV surplus may export.

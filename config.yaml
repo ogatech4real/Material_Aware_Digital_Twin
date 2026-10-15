@@ -17,7 +17,7 @@ pv:
   t_ref_c: 25.0
 
 battery:
-  e_nom_kwh: 5.0            # scales EFC into 325/290/285 band
+  e_nom_kwh: 5.0            # nominal usable model capacity (kWh)
   soc_min: 0.10
   soc_max: 0.95
   p_ch_max_kw: 6.0
@@ -26,9 +26,10 @@ battery:
   eta_dis: 0.95
   replacement_cost_gbp: 3500
   k_cal: 1.2e-5
+  Ea_over_R: 4000.0         # K; explicit value previously hard-coded in evaluation
   k_cyc: 2.5e-4
   alpha: 1.5
-  q_nom_Ah: 1000.0
+  q_nom_Ah: 1000.0         # illustrative fade-normalisation basis; calibration required
 
 environment:
   ambient_base_c: 15.0
@@ -51,12 +52,12 @@ economics:
   full_price_low: 0.26
   full_price_high: 0.325
 
-  lambda_batt: 0.0
+  lambda_batt: 0.0          # submitted Batt-Aware weight; zero means no active wear penalty
   lambda_batt_full: 1.2
-  lambda_pv: 0.20
+  lambda_pv: 0.20           # diagnostic PV weighting; not applied to dispatch
   batt_deg_marginal_gbp_per_kwh: 0.03
 
-# Supplementary Special-Issue extension only. Existing three-scenario pipeline remains unchanged.
+# Shared inverter assumptions for the revised fixed and adaptive controllers.
 inverter:
   eta_pv: 0.97
   eta_batt: 0.96

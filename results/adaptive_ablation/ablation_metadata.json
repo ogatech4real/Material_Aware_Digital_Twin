@@ -1,0 +1,23 @@
+{
+  "comparison": "identical adaptive dispatch with 2x2 mechanism ablation",
+  "input": "data/sim_input.csv",
+  "dt_h": 0.25,
+  "cases": {
+    "Adaptive_full": {
+      "battery_weight": true,
+      "thermal_guard": true
+    },
+    "No_battery_weight": {
+      "battery_weight": false,
+      "thermal_guard": true
+    },
+    "No_thermal_guard": {
+      "battery_weight": true,
+      "thermal_guard": false
+    },
+    "Neither_mechanism": {
+      "battery_weight": false,
+      "thermal_guard": false
+    }
+  }
+}
